@@ -157,7 +157,12 @@ app.use('*', async (c, next) => {
 	if (!nowTime.isSame(refreshTime)) {
 		authInfo.refreshTime = dayjs().toISOString();
 		await userService.updateUserInfo(c, authInfo.user.userId);
-		await c.env.kv.put(KvConst.AUTH_INFO + userId, JSON.stringify(authInfo), { expirationTtl: constant.TOKEN_EXPIRE });
+		if (path === '/logout' && c.req.method === 'DELETE') {
+			// Persist the refresh together with the token revocation.
+			c.set('logoutRefreshTime', authInfo.refreshTime);
+		} else {
+			await c.env.kv.put(KvConst.AUTH_INFO + userId, JSON.stringify(authInfo), { expirationTtl: constant.TOKEN_EXPIRE });
+		}
 	}
 
 	c.set('user',authInfo.user)
