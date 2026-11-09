@@ -116,7 +116,7 @@ const dbInit = {
 
 	async v3_1DB(c) {
 		try {
-			await c.env.db.prepare(`ALTER TABLE setting ADD COLUMN sync_delete INTEGER NOT NULL DEFAULT 0;`).run();
+			await c.env.db.prepare(`ALTER TABLE setting ADD COLUMN sync_delete INTEGER NOT NULL DEFAULT 1;`).run();
 		} catch (e) {
 			console.warn(`跳过字段：${e.message}`);
 		}
